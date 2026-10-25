@@ -64,7 +64,9 @@ La référence détaillée est `docs/direction-artistique.md` dans le repo teneb
 - Rendu provisoire en aplats : façades sur le bord sud des îlots, trottoirs, arbres d'alignement, bouches de métro, barrières Vauban.
 - Corrigé : l'écran-titre restait affiché en voile sombre pendant la partie et captait les clics.
 
-## La place (v0.3) : `place.html`
+## La place (v0.3) : `index.html`
+
+(L'ancien proto en rues est passé dans `proto.html`.)
 
 On met de côté le réseau de rues. Un seul écran vertical, jouable au téléphone : la place de la République, en pixel CRT avec les persos du studio.
 

@@ -14,16 +14,16 @@ Zéro dépendance, zéro build.
 
 Le studio de sprites s'ouvre de la même façon : `studio.html`.
 
-**La place** (`place.html`) est la nouvelle version, verticale, en pixel CRT, jouable au téléphone : uniquement la place de la République. `index.html` garde l'ancien proto en attendant.
+`index.html` est la place de la République : verticale, pixel CRT, jouable au téléphone. L'ancien proto en rues est dans `proto.html`.
 
 ## Structure
 
 | Fichier | Rôle |
 |---|---|
-| `index.html` | La page : HUD, scène, outils, bandeau d'info. |
+| `proto.html` | L'ancien proto v0.1 (rues, vue de dessus), mis de côté. |
 | `css/jeu.css` | Le style de l'interface (pancartes en carton, bandeau télé). |
 | `src/jeu.js` | Le proto v0.1 : foule, police, gaz, timeline, rendu, écrans. |
-| `place.html`, `src/place.js`, `css/place.css` | La place de la République en vertical : foule, cordons qui chargent et reculent, rapport de force, phases rassemblement puis dispersion. Reprend le brouillon du studio s'il existe dans le navigateur. |
+| `index.html`, `src/place.js`, `css/place.css` | La place de la République en vertical : foule, cordons qui chargent et reculent, rapport de force, phases rassemblement puis dispersion. Reprend le brouillon du studio s'il existe dans le navigateur. |
 | `data/cartes.js` | Les cartes faites main, décrites en rues (polylignes + largeur), sorties et barrages. |
 | `src/carte.js` | Rastérise une carte de `data/cartes.js` sur la grille de simulation. |
 | `studio.html`, `src/studio.js`, `css/studio.css` | Le studio : dessin des pièces de persos, réglage des tirages, aperçu de la foule. |

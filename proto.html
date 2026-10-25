@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bismillah · C'est les ténèbres</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Permanent+Marker&display=swap">
+<link rel="stylesheet" href="css/jeu.css">
+</head>
+<body>
+<div id="app">
+  <header id="hud">
+    <div><div class="acte" id="h-acte">Acte I</div><div class="rep" id="h-rep">Répression niv. 1</div></div>
+    <div class="counts"><span>Orga <b id="h-orga">0</b></span><span>Préf. <b id="h-pref">0</b></span></div>
+    <div class="phase" id="h-phase">Cortège</div>
+    <div class="progress">
+      <div class="lab"><span>Sortis de la nasse</span><span><b id="h-out">0</b> / <span id="h-obj">0</span></span></div>
+      <div class="bar"><i id="h-bar"></i><em id="h-mark"></em></div>
+    </div>
+    <button class="iconbtn" id="b-pause" aria-label="Pause"><svg viewBox="0 0 16 16" fill="currentColor"><rect x="3" y="2" width="3.5" height="12" rx="1"/><rect x="9.5" y="2" width="3.5" height="12" rx="1"/></svg></button>
+  </header>
+
+  <div id="stage"><canvas id="cv"></canvas></div>
+
+  <nav id="tools">
+    <button class="tool" data-tool="meg" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M3 10v4h3l7 4V6L6 10H3z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg><span class="lbl">Mégaphone</span><span class="cnt" id="c-meg">∞</span><span class="key">1</span></button>
+    <button class="tool" data-tool="1" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 4v17M21 4v17"/><path d="M3 6h18v8H3z" fill="currentColor" fill-opacity=".18"/></svg><span class="lbl">Banderole</span><span class="cnt" id="c-1">2</span><span class="key">2</span></button>
+    <button class="tool" data-tool="2" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M12 7v10M7 12h10" stroke-width="3"/></svg><span class="lbl">Medic</span><span class="cnt" id="c-2">2</span><span class="key">3</span></button>
+    <button class="tool" data-tool="3" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="7" y="2" width="10" height="20" rx="2"/><circle cx="12" cy="7" r="2"/><path d="M10 18h4"/></svg><span class="lbl">Filmeur</span><span class="cnt" id="c-3">2</span><span class="key">4</span></button>
+  </nav>
+
+  <div id="ticker"><div class="tag">DIRECT</div><div class="track" id="track"><span id="tick"></span></div></div>
+</div>
+
+<div id="screen"></div>
+
+<script src="src/vendor/charabia.js"></script>
+<script src="data/cartes.js"></script>
+<script src="src/carte.js"></script>
+<script src="src/jeu.js"></script>
+</body>
+</html>
