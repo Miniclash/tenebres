@@ -53,3 +53,13 @@ La référence détaillée est `docs/direction-artistique.md` dans le repo teneb
 - Le travail reste dans le navigateur ; on exporte `sprites.js` pour remplacer `data/sprites.js`.
 - `src/sprites.js` est le moteur que le jeu reprendra pour son rendu.
 - Prochaines étapes : poses supplémentaires (panique, porté, au sol, relevé, charge), pièces des autres rôles, véhicules, puis brancher le rendu du jeu sur le moteur.
+
+## Carte de République (v0.2)
+
+- Le générateur aléatoire est remplacé par une carte faite main : `data/cartes.js`, rastérisée par `src/carte.js`.
+- Géographie approximative mais dans l'ordre : place à gauche, Av. de la République en haut à droite (sortie Père-Lachaise), Bd Voltaire au milieu (sortie Nation, parcours déclaré, barré d'office), Bd du Temple puis Beaumarchais en bas à droite (sortie Bastille), Rue du Temple en bas (sortie Hôtel de Ville), Amelot et Richard-Lenoir en sorties fermées au départ.
+- Rues de liaison : Malte, Jean-Pierre-Timbaud, Folie-Méricourt, Saint-Maur, Oberkampf, Crussol, Charlot, Béranger, Bretagne. Magenta, Faubourg-du-Temple, Saint-Martin, Oberkampf et Chemin-Vert sont barrées au bout (décor).
+- Une rue = polyligne + largeur (1, 2 ou 3 cases), angles à 0°, 45° et 90°. Les cordons savent se poser en travers des rues en diagonale.
+- Carte fixe en paysage (plus de rotation en portrait) : le faux trois-quarts ne se tourne pas.
+- Rendu provisoire en aplats : façades sur le bord sud des îlots, trottoirs, arbres d'alignement, bouches de métro, barrières Vauban.
+- Corrigé : l'écran-titre restait affiché en voile sombre pendant la partie et captait les clics.

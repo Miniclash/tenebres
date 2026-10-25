@@ -84,13 +84,18 @@ const inb = (x,y) => x>=0 && y>=0 && x<W && y<H;
 function toXY(a,b){ return landscape ? [a,b] : [b, LA-1-a]; }
 function iAB(a,b){ const p = toXY(a,b); return p[1]*W + p[0]; }
 
-function genWorld(sw, sh){
-  landscape = sw >= sh;
-  const ratio = landscape ? sw/sh : sh/sw;
-  LB = 26; LA = clamp(Math.round(LB*ratio), 36, 54);
-  W = landscape ? LA : LB; H = landscape ? LB : LA;
-  let ok = false;
-  for (let i=0; i<60 && !ok; i++) ok = tryGen();
+let carte = null;
+function genWorld(){
+  carte = rasterCarte(CARTES.republique);
+  landscape = true; W = LA = carte.W; H = LB = carte.H;
+  grid = carte.grid.slice();
+  exits = carte.exits.map((e, ei) => ({ei, nom:e.nom, dest:e.dest, main:e.principale, ouverte:e.ouverte, dir:e.dir, open:true, cordon:null, tiles:e.tiles.slice()}));
+  plazaTiles = carte.plaza.slice();
+  statueTiles = carte.statue.slice();
+  const P = CARTES.republique.place;
+  plazaCenter = iAB(P.x0 + 2, ((P.y0 + P.y1) / 2) | 0);
+  const seen = flood(plazaCenter);
+  for (let i=0; i<W*H; i++) if (grid[i]===0 && !seen[i]) grid[i] = 1;
   const N = W*H;
   exitOwner = new Int16Array(N).fill(-1);
   exits.forEach((e,ei) => e.tiles.forEach(t => exitOwner[t] = ei));
@@ -99,50 +104,8 @@ function genWorld(sw, sh){
   gasCost = new Float32Array(N);
   traffic = new Float32Array(N);
   cellHead = new Int32Array(N);
-  plazaTiles = [];
-  for (let a=2; a<=8; a++) for (let b=plazaCB-4; b<=plazaCB+4; b++){ if (b<1||b>=LB-1) continue; const i=iAB(a,b); if (grid[i]===0) plazaTiles.push(i); }
-  plazaCenter = iAB(3, plazaCB);
   distSpawn = dijkstra(plazaTiles, false);
-  mapSeed = (Math.random()*1e9)|0;
-  const names = ['Rue de la Matraque','Bd de la Proportionnalité','Rue du Maintien-de-l’Ordre','Av. du 49.3','Rue des Interpellations Préventives','Bd Lacrymal','Rue du Parcours Refusé','Av. de la Dispersion'];
-  const nn = names.slice().sort(()=>Math.random()-.5);
-  avenues.forEach((av,i) => av.name = av.main ? 'Boulevard du Préfet' : nn[i % nn.length]);
-}
-
-function tryGen(){
-  grid = new Uint8Array(W*H).fill(1);
-  const set = (a,b,v) => { if (a<0||b<0||a>=LA||b>=LB) return; grid[iAB(a,b)] = v; };
-  avenues = []; let b = ri(2,3);
-  while (b + 2 <= LB - 2) { avenues.push({b, w:2}); b += 2 + ri(4,6); }
-  if (avenues.length < 4) return false;
-  const mi = Math.floor(avenues.length/2), main = avenues[mi];
-  const nextB = avenues[mi+1] ? avenues[mi+1].b : LB-1;
-  if (main.b + 3 <= nextB - 3) main.w = 3;
-  main.main = true;
-  crosses = []; let a = 10;
-  while (a + 2 <= LA - 5) { crosses.push({a, w:2}); a += 2 + ri(4,7); }
-  if (crosses.length < 3) return false;
-  plazaCB = main.b + Math.floor(main.w/2);
-  const pb0 = Math.max(1, plazaCB-5), pb1 = Math.min(LB-2, plazaCB+5);
-  for (const av of avenues) for (let aa=1; aa<LA; aa++) for (let k=0; k<av.w; k++){ const bb=av.b+k; if (aa<10 && (bb<pb0||bb>pb1)) continue; set(aa,bb,0); }
-  const bMin = avenues[0].b, bMax = avenues[avenues.length-1].b + avenues[avenues.length-1].w - 1;
-  for (const cr of crosses) for (let bb=bMin; bb<=bMax; bb++) for (let k=0; k<cr.w; k++) set(cr.a+k, bb, 0);
-  for (const av of avenues){ if (av.main) continue;
-    for (let i=0; i<crosses.length-1; i++) if (Math.random() < 0.3)
-      for (let aa=crosses[i].a+crosses[i].w; aa<crosses[i+1].a; aa++) for (let k=0; k<av.w; k++) set(aa, av.b+k, 1);
-  }
-  for (let c=1; c<crosses.length; c++){ const cr = crosses[c];
-    for (let i=0; i<avenues.length-1; i++) if (Math.random() < 0.24)
-      for (let bb=avenues[i].b+avenues[i].w; bb<avenues[i+1].b; bb++) for (let k=0; k<cr.w; k++) set(cr.a+k, bb, 1);
-  }
-  for (let aa=1; aa<=9; aa++) for (let bb=pb0; bb<=pb1; bb++) set(aa, bb, 0);
-  statueTiles = [];
-  for (let aa=5; aa<=6; aa++) for (let bb=plazaCB; bb<=plazaCB+1; bb++){ set(aa,bb,1); statueTiles.push(iAB(aa,bb)); }
-  exits = avenues.map((av,ei) => ({ei, b:av.b, w:av.w, main:!!av.main, open:true, cordon:null, tiles:Array.from({length:av.w},(_,k)=>iAB(LA-1, av.b+k))}));
-  const seen = flood(iAB(3, plazaCB));
-  for (let i=0; i<W*H; i++) if (grid[i]===0 && !seen[i]) grid[i] = 1;
-  for (const e of exits) if (!seen[e.tiles[0]]) return false;
-  return true;
+  mapSeed = 17102026;
 }
 function flood(start){
   const seen = new Uint8Array(W*H); const st=[start]; seen[start]=1;
@@ -217,10 +180,9 @@ function newRun(demo){
   genWorld(r.width || 900, r.height || 560);
   nextA = new Int32Array(G.total + 16);
   // exits: main boulevard barred from the start, two side exits open
-  const side = exits.filter(e => !e.main).sort(() => Math.random()-.5);
   exits.forEach(e => e.open = true);
   for (const e of exits) if (e.main) closeExit(e, true);
-  side.forEach((e,i) => { if (i >= 2) closeExit(e, false); });
+  for (const e of exits) if (!e.main && !e.ouverte) closeExit(e, false);
   computeFields();
   buildEvents();
   resize();
@@ -245,12 +207,13 @@ function closeExit(e, withCordon){
   for (const t of e.tiles) grid[t] = 2;
   e.open = false;
   if (withCordon){
-    for (let aa=LA-3; aa>=LA-12; aa--){
-      const [cx,cy] = toXY(aa, e.b + Math.floor(e.w/2));
-      const axis = landscape ? 'v' : 'h';
+    const mid = e.tiles[Math.floor(e.tiles.length/2)], mx = mid%W, my = (mid/W)|0;
+    const axis = e.dir.x ? 'v' : 'h';
+    for (let k=2; k<=11; k++){
+      const cx = mx - e.dir.x*k, cy = my - e.dir.y*k;
       const line = extendLine(cx, cy, axis);
-      if (line && line.length === e.w && lineFree(line, -1)){
-        e.cordon = createCordon(line, axis, landscape ? {x:-1,y:0} : {x:0,y:1}, {stationary:true, kind:'exit'});
+      if (line && line.length === e.tiles.length && lineFree(line, -1)){
+        e.cordon = createCordon(line, axis, {x:-e.dir.x, y:-e.dir.y}, {stationary:true, kind:'exit'});
         break;
       }
     }
@@ -312,6 +275,7 @@ function streetAxisAt(x, y){
   const rh = run(1,0), rv = run(0,1);
   if (rh <= 5 && rv >= rh + 3) return 'h';
   if (rv <= 5 && rh >= rv + 3) return 'v';
+  if (rh <= 4 && rv <= 4) return rh <= rv ? 'h' : 'v';
   return null;
 }
 function nearCordon(x, y, r){
@@ -775,55 +739,113 @@ function resize(){
   cv.width = Math.max(1, Math.round(r.width*dpr)); cv.height = Math.max(1, Math.round(r.height*dpr));
   if (W){ scale = Math.min(r.width/(W*T), r.height/(H*T)); offX = (r.width - W*T*scale)/2; offY = (r.height - H*T*scale)/2; renderMap(); }
 }
-const COL = {asph:'#34343b', walk:'#45454e', roof:['#5c6373','#626a7b','#575e6d','#687082'], stone:'#bdb092', chim:'#383c47', plaza:'#6d685f', plazaLine:'#77726a', tree:'#3f5a3a', tree2:'#4d6d46'};
+const COL = {asph:'#3a3a42', bd:'#36363e', walk:'#4a4a53', curb:'#5a5a64', roof:['#5c6373','#626a7b','#575e6d','#687082'], zinc:'#7d8796', stone:'#cbbf9f', stoneDk:'#a99c7c', win:'#3a3f4c', chim:'#383c47', plaza:'#6f6a60', plazaLine:'#7a756a', tree:'#3f5a3a', tree2:'#4d6d46', vauban:'#b9bcc4', vaubanDk:'#7c808a', van:'#2d4a8a'};
 function renderMap(){
   mapCanvas = document.createElement('canvas');
   mapCanvas.width = Math.max(1, Math.ceil(W*T*scale*dpr)); mapCanvas.height = Math.max(1, Math.ceil(H*T*scale*dpr));
   const m = mapCanvas.getContext('2d');
   m.setTransform(scale*dpr, 0, 0, scale*dpr, 0, 0);
-  const rng = mulberry(mapSeed);
-  const isB = (x,y) => !inb(x,y) || grid[y*W+x] === 1;
-  const plazaSet = new Set(); for (let a=1; a<=9; a++) for (let b=plazaCB-5; b<=plazaCB+5; b++){ if (b>=1 && b<LB-1){ const i=iAB(a,b); if (grid[i]!==1) plazaSet.add(i); } }
-  const statueSet = new Set(statueTiles);
+  const rng = mulberry(mapSeed), K = carte.K, kind = carte.kind;
+  const kAt = (x,y) => inb(x,y) ? kind[y*W+x] : K.BATI;
+  const bati = (x,y) => kAt(x,y) === K.BATI;
+  // sol
   for (let y=0; y<H; y++) for (let x=0; x<W; x++){
-    const i = y*W+x;
-    if (grid[i] === 1 && !statueSet.has(i)){
-      const h = mulberry((Math.floor(x/2)*73856093) ^ (Math.floor(y/3)*19349663) ^ mapSeed)();
-      m.fillStyle = COL.roof[Math.floor(h*4)]; m.fillRect(x*T, y*T, T+.5, T+.5);
-      if (rng() < 0.12){ m.fillStyle = COL.chim; m.fillRect(x*T + rng()*10+2, y*T + rng()*10+2, 3, 3); }
-    } else {
-      m.fillStyle = plazaSet.has(i) || statueSet.has(i) ? COL.plaza : COL.asph; m.fillRect(x*T, y*T, T+.5, T+.5);
-    }
+    const k = kind[y*W+x];
+    if (k === K.BATI){
+      const h = mulberry((Math.floor(x/3)*73856093) ^ (Math.floor(y/2)*19349663) ^ mapSeed)();
+      m.fillStyle = COL.roof[Math.floor(h*4)];
+    } else m.fillStyle = k === K.PLACE || k === K.STATUE ? COL.plaza : k === K.BD ? COL.bd : COL.asph;
+    m.fillRect(x*T, y*T, T+.5, T+.5);
   }
-  // facades and sidewalks
+  // toits en zinc, cheminées
   for (let y=0; y<H; y++) for (let x=0; x<W; x++){
-    const i = y*W+x; const b = grid[i]===1 && !statueSet.has(i);
+    if (!bati(x,y)) continue;
+    if (rng() < 0.18){ m.fillStyle = COL.chim; m.fillRect(x*T + 2 + rng()*10, y*T + 2 + rng()*8, 3, 3); }
+    if (!bati(x,y-1)){ m.fillStyle = COL.zinc; m.fillRect(x*T, y*T, T, 2); }
+  }
+  // trottoirs
+  for (let y=0; y<H; y++) for (let x=0; x<W; x++){
+    const k = kind[y*W+x];
+    if (k === K.BATI || k === K.STATUE || k === K.BARRIERE) continue;
     for (const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){
-      const n = isB(x+dx,y+dy) && !statueSet.has((y+dy)*W+x+dx);
-      if (b && !n && inb(x+dx,y+dy)){ m.fillStyle = COL.stone; strip(m, x, y, dx, dy, 2.5); }
-      if (!b && n && !plazaSet.has(i) && !statueSet.has(i)){ m.fillStyle = COL.walk; strip(m, x, y, dx, dy, 3.5); }
+      if (!bati(x+dx,y+dy)) continue;
+      const w = k === K.PLACE ? 2.5 : 4;
+      m.fillStyle = COL.walk; strip(m, x, y, dx, dy, w);
+      m.fillStyle = COL.curb;
+      if (dx===1) m.fillRect(x*T+T-w-1, y*T, 1, T); else if (dx===-1) m.fillRect(x*T+w, y*T, 1, T);
+      else if (dy===1) m.fillRect(x*T, y*T+T-w-1, T, 1); else m.fillRect(x*T, y*T+w, T, 1);
     }
   }
-  // plaza paving + trees
-  m.strokeStyle = COL.plazaLine; m.lineWidth = .5;
-  for (const i of plazaSet){ const x=i%W, y=(i/W)|0; m.strokeRect(x*T+.25, y*T+.25, T-.5, T-.5); }
-  for (const i of plazaSet){ const x=i%W, y=(i/W)|0; const edge = [[1,0],[-1,0],[0,1],[0,-1]].some(([dx,dy]) => isB(x+dx,y+dy) && !statueSet.has((y+dy)*W+x+dx)); if (edge && rng() < .55){ m.fillStyle = rng()<.5 ? COL.tree : COL.tree2; m.beginPath(); m.arc(x*T+8+rng()*2-1, y*T+8+rng()*2-1, 5.5, 0, 7); m.fill(); } }
-  // statue
-  let sx=0, sy=0; for (const i of statueTiles){ sx += (i%W+.5)*T; sy += (((i/W)|0)+.5)*T; } sx/=statueTiles.length; sy/=statueTiles.length;
-  m.fillStyle = '#9c9482'; m.beginPath(); m.arc(sx, sy, 13, 0, 7); m.fill();
-  m.fillStyle = '#b5ad99'; m.beginPath(); m.arc(sx, sy, 9, 0, 7); m.fill();
-  m.fillStyle = '#4f6b55'; m.beginPath(); m.arc(sx, sy, 4.5, 0, 7); m.fill();
-  m.fillStyle = '#5f8066'; m.fillRect(sx-1, sy-11, 2, 7);
-  // labels
-  m.fillStyle = 'rgba(255,255,255,.42)'; m.font = '700 7px "Barlow Condensed", sans-serif'; m.textAlign = 'center'; m.textBaseline = 'middle';
-  const [lx,ly] = toXY(1.5, plazaCB+.5); m.fillText('PLACE DE LA RÉPUBLIQUE', landscape ? (lx+.5)*T + 22 : lx*T, landscape ? ly*T : (ly+.5)*T);
-  m.font = '600 6.5px "Barlow Condensed", sans-serif'; m.fillStyle = 'rgba(255,255,255,.28)';
-  for (const av of avenues){
-    const aMid = crosses[1] ? crosses[1].a + 4 : Math.floor(LA*.4);
-    const [x,y] = toXY(aMid, av.b + av.w/2);
-    m.save(); m.translate(landscape ? x*T : x*T, landscape ? y*T : y*T); if (!landscape) m.rotate(-Math.PI/2);
-    m.textAlign = 'left'; m.fillText(av.name.toUpperCase(), 0, 0); m.restore();
+  // façades haussmanniennes : bord sud des îlots (faux trois-quarts)
+  for (let y=0; y<H; y++) for (let x=0; x<W; x++){
+    if (!bati(x,y) || bati(x,y+1) || !inb(x,y+1)) continue;
+    const fy = y*T + 7;
+    m.fillStyle = COL.stone; m.fillRect(x*T, fy, T, T-7);
+    m.fillStyle = COL.stoneDk; m.fillRect(x*T, fy, T, 1); m.fillRect(x*T, fy+4, T, 1);
+    m.fillStyle = COL.win;
+    for (const wx of [2, 7, 12]){ m.fillRect(x*T+wx, fy+1.5, 2, 2); }
+    if (((x*7) ^ y) % 5 === 0){ m.fillStyle = '#5b3a2a'; m.fillRect(x*T+6, fy+5, 4, 4); }
+    else { m.fillStyle = COL.win; for (const wx of [2, 7, 12]) m.fillRect(x*T+wx, fy+5.5, 2, 2.5); }
   }
+  // arbres d'alignement sur les boulevards
+  for (let y=0; y<H; y++) for (let x=0; x<W; x++){
+    if (kind[y*W+x] !== K.BD || (x+y) % 3) continue;
+    for (const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){
+      if (!bati(x+dx,y+dy) || dy === -1 && false) continue;
+      m.fillStyle = (x*13+y)%2 ? COL.tree : COL.tree2;
+      m.beginPath(); m.arc(x*T+8+dx*3.5, y*T+8+dy*3.5, 3.8, 0, 7); m.fill();
+      break;
+    }
+  }
+  // place : dallage, arbres en bordure, statue
+  m.strokeStyle = COL.plazaLine; m.lineWidth = .5;
+  for (const i of plazaTiles){ const x=i%W, y=(i/W)|0; m.strokeRect(x*T+.25, y*T+.25, T-.5, T-.5); }
+  for (const i of plazaTiles){
+    const x=i%W, y=(i/W)|0;
+    const edge = [[1,0],[-1,0],[0,1],[0,-1]].some(([dx,dy]) => bati(x+dx,y+dy));
+    if (edge && (x+y)%2===0){ m.fillStyle = (x+y)%4 ? COL.tree : COL.tree2; m.beginPath(); m.arc(x*T+8, y*T+8, 5.5, 0, 7); m.fill(); }
+  }
+  let sx=0, sy=0; for (const i of statueTiles){ sx += (i%W+.5)*T; sy += (((i/W)|0)+.5)*T; } sx/=statueTiles.length; sy/=statueTiles.length;
+  m.fillStyle = '#9c9482'; m.beginPath(); m.arc(sx, sy, 15, 0, 7); m.fill();
+  m.fillStyle = '#b5ad99'; m.beginPath(); m.arc(sx, sy, 10, 0, 7); m.fill();
+  m.fillStyle = '#4f6b55'; m.fillRect(sx-4, sy-6, 8, 8);
+  m.fillStyle = '#5f8066'; m.fillRect(sx-1.5, sy-20, 3, 15); m.fillRect(sx-4, sy-20, 8, 3);
+  // bouches de métro
+  const P = CARTES.republique.place;
+  for (const [mx,my] of [[P.x0+1, P.y0], [P.x1-1, P.y1], [P.x1-1, P.y0+1]]){
+    const cx = mx*T+8, cy = my*T+8;
+    m.fillStyle = '#2e5a3a'; m.fillRect(cx-6, cy-3, 12, 7);
+    m.fillStyle = '#f2c14e'; m.beginPath(); m.arc(cx, cy-7, 3.5, 0, 7); m.fill();
+    m.fillStyle = '#222'; m.font = '700 5px "Barlow Condensed", sans-serif'; m.textAlign = 'center'; m.textBaseline = 'middle'; m.fillText('M', cx, cy-6.8);
+  }
+  // barrages fixes : barrières Vauban + fourgon
+  for (const bg of carte.barrages){
+    for (const i of bg.tiles){
+      const x=i%W, y=(i/W)|0;
+      m.fillStyle = COL.asph; m.fillRect(x*T, y*T, T, T);
+      m.fillStyle = COL.vaubanDk;
+      if (bg.dir.x){ m.fillRect(x*T+7, y*T, 2, T); m.fillStyle = COL.vauban; for (let k=1; k<T; k+=3) m.fillRect(x*T+6, y*T+k, 4, 1); }
+      else { m.fillRect(x*T, y*T+7, T, 2); m.fillStyle = COL.vauban; for (let k=1; k<T; k+=3) m.fillRect(x*T+k, y*T+6, 1, 4); }
+    }
+    const t0 = bg.tiles[0], t1 = bg.tiles[bg.tiles.length-1];
+    const cx = ((t0%W + t1%W)/2 + .5)*T + bg.dir.x*2, cy = ((((t0/W)|0) + ((t1/W)|0))/2 + .5)*T + bg.dir.y*2;
+    m.save(); m.translate(cx, cy); if (bg.dir.y) m.rotate(Math.PI/2);
+    m.fillStyle = COL.van; m.fillRect(-4, -7, 8, 14); m.fillStyle = '#9fb3d9'; m.fillRect(-3, -6, 6, 3); m.restore();
+  }
+  // noms de rues
+  m.textAlign = 'center'; m.textBaseline = 'middle';
+  for (const l of carte.labels){
+    const size = l.type === 'bd' ? 6.5 : 5.5;
+    m.font = `700 ${size}px "Barlow Condensed", sans-serif`;
+    const txt = l.nom.toUpperCase();
+    if (m.measureText(txt).width > l.len*T - 6) continue;
+    m.save(); m.translate((l.x+.5)*T, (l.y+.5)*T); m.rotate(l.ang);
+    m.fillStyle = 'rgba(0,0,0,.35)'; m.fillText(txt, .5, .5);
+    m.fillStyle = 'rgba(255,255,255,.55)'; m.fillText(txt, 0, 0);
+    m.restore();
+  }
+  m.font = '700 8px "Barlow Condensed", sans-serif'; m.fillStyle = 'rgba(255,255,255,.6)';
+  m.fillText('PLACE DE LA RÉPUBLIQUE', ((P.x0+P.x1)/2+.5)*T + 20, (P.y0+.9)*T);
 }
 function strip(m, x, y, dx, dy, w){
   if (dx===1) m.fillRect(x*T+T-w, y*T, w, T); else if (dx===-1) m.fillRect(x*T, y*T, w, T);
@@ -857,21 +879,17 @@ function drawExits(now){
     const pts = e.tiles.map(t => [t%W, (t/W)|0]);
     const x0 = Math.min(...pts.map(p=>p[0]))*T, y0 = Math.min(...pts.map(p=>p[1]))*T;
     const x1 = (Math.max(...pts.map(p=>p[0]))+1)*T, y1 = (Math.max(...pts.map(p=>p[1]))+1)*T;
+    const dx = e.dir.x, dy = e.dir.y;
     if (e.open){
       const pulse = .55 + .45*Math.sin(now*4);
       ctx.fillStyle = `rgba(95,211,141,${.18+.12*pulse})`; ctx.fillRect(x0, y0, x1-x0, y1-y0);
       ctx.strokeStyle = '#5fd38d'; ctx.lineWidth = 2;
-      const n = e.tiles.length;
-      for (let k=0; k<n; k++){
-        const [px,py] = pts[k]; const cx=(px+.5)*T, cy=(py+.5)*T;
+      for (const [px,py] of pts){
+        const cx=(px+.5)*T, cy=(py+.5)*T;
         ctx.beginPath();
-        if (landscape){ ctx.moveTo(cx-3, cy-4); ctx.lineTo(cx+2, cy); ctx.lineTo(cx-3, cy+4); }
-        else { ctx.moveTo(cx-4, cy+3); ctx.lineTo(cx, cy-2); ctx.lineTo(cx+4, cy+3); }
+        ctx.moveTo(cx - dx*3 - dy*4, cy - dy*3 - dx*4); ctx.lineTo(cx + dx*2, cy + dy*2); ctx.lineTo(cx - dx*3 + dy*4, cy - dy*3 + dx*4);
         ctx.stroke();
       }
-      ctx.fillStyle = '#5fd38d'; ctx.font = '700 7px "Barlow Condensed", sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-      if (landscape){ ctx.save(); ctx.translate(x0-6, (y0+y1)/2); ctx.rotate(-Math.PI/2); ctx.fillText('SORTIE', 0, 0); ctx.restore(); }
-      else ctx.fillText('SORTIE', (x0+x1)/2, y1+6);
     } else {
       ctx.fillStyle = '#8c8c94'; ctx.fillRect(x0, y0, x1-x0, y1-y0);
       ctx.save(); ctx.beginPath(); ctx.rect(x0, y0, x1-x0, y1-y0); ctx.clip();
@@ -879,6 +897,13 @@ function drawExits(now){
       for (let s=-40; s<80; s+=8){ ctx.beginPath(); ctx.moveTo(x0+s, y0); ctx.lineTo(x0+s+30, y0+30); ctx.stroke(); }
       ctx.restore();
     }
+    const label = (e.open ? 'SORTIE ' : '') + e.dest.toUpperCase();
+    ctx.fillStyle = e.open ? '#5fd38d' : '#d9dbe0'; ctx.font = '700 7px "Barlow Condensed", sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    const mx = (x0+x1)/2, my = (y0+y1)/2;
+    ctx.save();
+    if (dx){ ctx.translate(mx - dx*(T*0.5+6), my); ctx.rotate(-Math.PI/2); }
+    else { ctx.translate(mx, my - dy*(T*0.5+6)); }
+    ctx.fillText(label, 0, 0); ctx.restore();
   }
 }
 function drawMeg(now){
@@ -1204,6 +1229,6 @@ function boot(){
 let rzT = 0;
 window.addEventListener('resize', () => { clearTimeout(rzT); rzT = setTimeout(resize, 80); });
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if (W) renderMap(); });
-window.__nasse = {G, update, newRun, applyTool, setTool: t => { tool = t; }, endRun, save: () => save, get mode(){ return mode; }, set mode(v){ mode = v; }};
+window.__nasse = {G, update, newRun, applyTool, setTool: t => { tool = t; }, endRun, save: () => save, get exits(){ return exits; }, get mode(){ return mode; }, set mode(v){ mode = v; }};
 boot();
 })();

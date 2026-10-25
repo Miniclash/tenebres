@@ -20,7 +20,9 @@ Le studio de sprites s'ouvre de la même façon : `studio.html`.
 |---|---|
 | `index.html` | La page : HUD, scène, outils, bandeau d'info. |
 | `css/jeu.css` | Le style de l'interface (pancartes en carton, bandeau télé). |
-| `src/jeu.js` | Le proto v0.1 en un seul fichier : génération de carte, foule, police, gaz, timeline, rendu, écrans. |
+| `src/jeu.js` | Le proto v0.1 : foule, police, gaz, timeline, rendu, écrans. |
+| `data/cartes.js` | Les cartes faites main, décrites en rues (polylignes + largeur), sorties et barrages. |
+| `src/carte.js` | Rastérise une carte de `data/cartes.js` sur la grille de simulation. |
 | `studio.html`, `src/studio.js`, `css/studio.css` | Le studio : dessin des pièces de persos, réglage des tirages, aperçu de la foule. |
 | `src/sprites.js` | Le moteur de sprites, commun au studio et (bientôt) au jeu. |
 | `data/palette.js` | La palette de 256 couleurs, générée par `tools/palette.py`. |
