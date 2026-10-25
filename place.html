@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#141518">
+<title>Bismillah · Place de la République</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jersey+10&family=Pixelify+Sans:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="css/place.css">
+</head>
+<body class="crt-on">
+<div id="crt" aria-hidden="true"></div>
+
+<div id="app">
+  <header id="hud">
+    <div class="hud-l">
+      <div class="acte" id="hActe">Acte I</div>
+      <div class="rep" id="hRep">Répression 1</div>
+    </div>
+    <div class="hud-c">
+      <div class="phase" id="hPhase">Rassemblement</div>
+      <div class="clock" id="hClock">1:30</div>
+    </div>
+    <div class="hud-r">
+      <div class="cnt"><span>Place</span><b id="hPlace">0</b></div>
+      <div class="cnt"><span>Sortis</span><b id="hOut">0</b></div>
+      <div class="cnt"><span>GAV</span><b id="hGav">0</b></div>
+    </div>
+    <button class="ico" id="bPause" aria-label="Pause"><svg viewBox="0 0 8 8" shape-rendering="crispEdges"><rect x="1" y="1" width="2" height="6" fill="currentColor"/><rect x="5" y="1" width="2" height="6" fill="currentColor"/></svg></button>
+  </header>
+  <div class="goal" id="hGoal" hidden><div class="goal-bar"><i id="hBar"></i><em id="hMark"></em></div><span id="hGoalTxt">0 / 0</span></div>
+
+  <div id="stage"><canvas id="cv" width="180" height="312" aria-label="La place de la République"></canvas></div>
+
+  <nav id="tools" aria-label="Outils">
+    <button class="tool" data-tool="meg" aria-pressed="true"><svg viewBox="0 0 9 9" shape-rendering="crispEdges"><path fill="currentColor" d="M1 3h2v3H1zM3 2h1v5H3zM4 1h1v7H4zM6 2h1v1H6zM7 3h1v3H7zM6 6h1v1H6z"/></svg><span class="lbl">Mégaphone</span><span class="n" id="nMeg">∞</span><span class="key">1</span></button>
+    <button class="tool" data-tool="ban" aria-pressed="false"><svg viewBox="0 0 9 9" shape-rendering="crispEdges"><path fill="currentColor" d="M1 1h1v8H1zM7 1h1v8H7zM2 2h5v4H2z" opacity=".9"/></svg><span class="lbl">Banderole</span><span class="n" id="nBan">2</span><span class="key">2</span></button>
+    <button class="tool" data-tool="med" aria-pressed="false"><svg viewBox="0 0 9 9" shape-rendering="crispEdges"><path fill="currentColor" d="M3 1h3v2h2v3H6v2H3V6H1V3h2z"/></svg><span class="lbl">Medic</span><span class="n" id="nMed">2</span><span class="key">3</span></button>
+    <button class="tool" data-tool="film" aria-pressed="false"><svg viewBox="0 0 9 9" shape-rendering="crispEdges"><path fill="currentColor" d="M2 1h5v7H2zM3 2v4h3V2z"/><rect x="4" y="7" width="1" height="1" fill="#141518"/></svg><span class="lbl">Filmeur</span><span class="n" id="nFilm">2</span><span class="key">4</span></button>
+  </nav>
+
+  <div id="ticker"><div class="tag">DIRECT</div><div class="track" id="track"><span id="tick"></span></div></div>
+</div>
+
+<div id="screen" hidden></div>
+
+<script src="data/palette.js"></script>
+<script src="data/sprites.js"></script>
+<script src="src/sprites.js"></script>
+<script src="src/place.js"></script>
+</body>
+</html>

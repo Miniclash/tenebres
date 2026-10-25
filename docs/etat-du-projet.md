@@ -63,3 +63,20 @@ La référence détaillée est `docs/direction-artistique.md` dans le repo teneb
 - Carte fixe en paysage (plus de rotation en portrait) : le faux trois-quarts ne se tourne pas.
 - Rendu provisoire en aplats : façades sur le bord sud des îlots, trottoirs, arbres d'alignement, bouches de métro, barrières Vauban.
 - Corrigé : l'écran-titre restait affiché en voile sombre pendant la partie et captait les clics.
+
+## La place (v0.3) : `place.html`
+
+On met de côté le réseau de rues. Un seul écran vertical, jouable au téléphone : la place de la République, en pixel CRT avec les persos du studio.
+
+- Rendu natif 180 × 312 (15 × 26 cases de 12 px), agrandi en entier. Haut = nord-ouest (René-Boulanger, Saint-Martin, Magenta), bas = sud-est (Bd du Temple, Voltaire, Av. de la République). Côtés : Turbigo et Rue du Temple à gauche, Léon-Jouhaux et Faubourg-du-Temple à droite. Ordre approximatif, à corriger sur place.
+- Les rues ne sont que des débouchés de 2 à 5 cases. Chaque débouché est à la fois une sortie et l'entrée des CRS (cordon + fourgon).
+- Phase 1, rassemblement (1:30) : la foule arrive par le métro et les rues ouvertes. Les CRS ferment les rues une à une, chargent (télégraphié : points d'exclamation et chevrons rouges), puis reculent. Grenadiers à partir de 0:40.
+- Rapport de force : on compte les gens au contact qui poussent vers un cordon. Plus nombreux que ce que le cordon encaisse (≈ 1,1 par CRS), il recule. Repoussé hors de la rue, il se replie et la rue se rouvre ; la police revient plus tard.
+- Phase 2, dispersion (1:00) : sommations, métro fermé, sortie « conseillée » par Voltaire. Seul un manifestant sur cinq connaît le chemin, les autres suivent par contagion ou par le mégaphone. Nasse depuis le haut, arrêté préfectoral qui déplace la sortie, nasse depuis le bas, tout ferme 10 s avant la fin.
+- Victoire : 45 % de la foule sortie. Ceux qui restent sont nassés.
+- Chutes : charges, gaz, et bousculades (panique dans une foule trop serrée). Au sol 9 s sans medic = évacué blessé.
+- Outils : mégaphone (illimité), banderole (arrête une charge, encaisse 2 charges), medic (relève, calme la panique autour), filmeur (cône : la police hésite, interpelle moitié moins, preuves perdues si GAV).
+- Caisse de grève propre à cette version (sauvegarde `bismillah-place-v1`).
+- Simulations automatiques : sans rien faire on perd (20 à 44 sortis sur 59), un joueur qui n'utilise que le mégaphone gagne en répression 1 et perd en répression 3.
+
+À faire ensuite : poses de face et de dos pour les CRS (ils ne savent que regarder à gauche ou à droite), pose de charge, pose au sol, son (Charabia), et vérifier l'ordre des rues autour de la place.
