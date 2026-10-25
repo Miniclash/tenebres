@@ -24,6 +24,14 @@ Référence commune pour tout ce qui touche à l'image du jeu. Si un asset ne re
 - Bitume éclairci (`bitume.4`) pour que les uniformes marine se détachent.
 - Couleurs réservées aux rôles, jamais tirées pour la foule : `gris.15` et `rouge.9` (medic), `jaune.15` (écran du filmeur).
 
+## Les persos
+
+- Calques, du fond vers l'avant : derrière (pancarte, drapeau, parapluie), jambes, corps, bras, tête, devant (bouclier, matraque).
+- Les bras sont un calque à part et prennent les couleurs du perso (manche = haut, main = peau). Une pièce peut imposer des bras : pancartes, drapeaux et parapluie imposent les bras levés. Les futures poses (panique, interpellation, reddition) pourront faire pareil.
+- Un costume (banane, dinosaure, tout nu) cache les calques qu'il remplace.
+- Persos : manifestant, medic, porte-drapeau (Palestine, Bretagne, arc-en-ciel), black bloc (tout en noir, parfois un parapluie), CRS bouclier et CRS matraque (liseré jaune sur le casque), et trois spéciaux rares : banane, tout nu, dinosaure gonflable.
+- Composition de la foule par défaut : porte-drapeaux 1 sur 60, black blocs 1 sur 40 en grappes de 4 à 8, spéciaux 1 sur 150 au total, manifestants pour le reste. Les medics sont un rôle donné par le joueur.
+
 ## Les rôles
 
 Le rôle se lit à la silhouette, pas à un pictogramme :
