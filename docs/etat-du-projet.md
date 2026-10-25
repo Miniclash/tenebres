@@ -36,9 +36,20 @@
 - Son : Charabia pour le Préfet, le présentateur du bandeau, les slogans de la foule, la radio des CRS.
 - Code : séparer simulation, rendu et réglages pour équilibrer et brancher des sprites.
 
-## Contraintes techniques pour les visuels
+## Direction visuelle (décidée)
 
-- Vue de dessus. Une case de carte = 16 unités monde, mise à l'échelle selon l'écran (environ 14 px sur mobile, 23 px sur desktop).
-- Manifestant : environ 7 unités de diamètre. CRS : environ 13 × 15, occupe une case. Fourgon : 18 × 30.
-- Des centaines de manifestants à l'écran en même temps : les sprites doivent rester lisibles très petits.
-- Le jeu est en pancartes de carton (interface) sur bitume sombre (carte). Polices actuelles : Permanent Marker et Barlow Condensed.
+La référence détaillée est `docs/direction-artistique.md` dans le repo tenebres.
+
+- Pixel art basse résolution avec filtre CRT sur tout l'écran, interface comprise, dans la famille de Charabia. L'interface actuelle (Permanent Marker, Barlow Condensed) sera refaite dans ce style.
+- Faux trois-quarts façon Zelda GBA, persos sans visage façon Lemmings.
+- Densité B : 1 case de carte = 12 pixels natifs, agrandis en entier. Pièces sur un cadre de 9 × 11, corps du manifestant en 5 × 7, pied en (4, 10). CRS de même hauteur, élargi par le bouclier.
+- Palette de 256 couleurs (16 rampes × 16 pas), bitume éclairci pour détacher les CRS, couleurs réservées aux rôles.
+- Rôles lisibles à la silhouette : croix rouge dans le dos du medic, bras levé et écran du filmeur, banderole tenue à deux, cône du mégaphone.
+- Véhicules (fourgon, lance-eau) : la maquette n'a pas convaincu, à refaire.
+
+## Studio de sprites (v0 en place)
+
+- `studio.html` dans le repo : dessin des pièces par calques (derrière, jambes, corps, tête, devant), couleurs par canaux tirés au hasard, tirages par type (manifestant, medic, CRS bouclier, CRS matraque), rue animée et cortège de cartes.
+- Le travail reste dans le navigateur ; on exporte `sprites.js` pour remplacer `data/sprites.js`.
+- `src/sprites.js` est le moteur que le jeu reprendra pour son rendu.
+- Prochaines étapes : poses supplémentaires (panique, porté, au sol, relevé, charge), pièces des autres rôles, véhicules, puis brancher le rendu du jeu sur le moteur.
