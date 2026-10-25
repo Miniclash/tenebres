@@ -1,6 +1,6 @@
 # Bismillah · C'est les ténèbres
 
-Petit jeu satirique inspiré des manifestations du 17 octobre 2026 à Paris. Tower defense inversé façon Lemmings : tu n'es pas un manifestant, tu es la manif. Il faut faire sortir le cortège de la nasse avant que la préfecture ferme toutes les rues. Roguelite incrémental : entre deux actes, la colère accumulée achète des améliorations.
+PFais sortir le cortège de la nasse avant que la préfecture ferme toutes les rues. Roguelite incrémental : entre deux actes, la colère accumulée achète des améliorations.
 
 ## Lancer
 
