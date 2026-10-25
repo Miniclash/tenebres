@@ -113,24 +113,24 @@ const cout = u => Math.round(u.base * Math.pow(1.6, L(u.id)));
 
 /* ---------- bandeau ---------- */
 const TICK = {
-  start:["Quelques dizaines de manifestants place de la République selon nos informations","Rassemblement à République : les commerçants se disent très inquiets pour leurs terrasses","La préfecture appelle au calme et passe commande de grenades"],
-  cordon:["Les forces de l'ordre protègent courageusement une rue","Un cordon de sécurité mis en place pour la sécurité du cordon","Selon nos experts, la rue était menacée"],
+  start:["De dangereux ultra-gauchistes place de la République selon nos informations","Rassemblement à République : la France à peur pour les abribus","La préfecture appelle au calme et passe commande de grenades"],
+  cordon:["Les forces de l'ordre protègent courageusement un mur","Un cordon de sécurité mis en place pour la sécurité du cordon de sécurité","Selon nos experts, le trottoir était menacé"],
   charge:["Les forces de l'ordre avancent courageusement vers le dos des manifestants","Charge : la préfecture parle d'un « déplacement dynamique »","Un manifestant aurait foncé sur un bouclier à l'arrêt, selon une source policière"],
   recule:["Un cordon recule : la préfecture dénonce une foule « anormalement nombreuse »","Les forces de l'ordre se replient en bon ordre, affirment les forces de l'ordre","Le ministre salue un recul stratégique planifié depuis toujours"],
-  grab:["Interpellation d'un individu au comportement suspect (il marchait)","Un lycéen interpellé en possession d'une banane, arme par destination","Interpellation préventive : il allait sans doute faire quelque chose"],
+  grab:["Interpellation d'un individu au comportement suspectement supect","Un lycéen interpellé en possession d'une banane, arme par destination","Interpellation préventive : il allait sans doute faire quelque chose"],
   gas:["Un nuage de lacrymogène aurait été agressé par des manifestants","Gaz : la préfecture évoque un brouillard naturel d'automne","Des manifestants se seraient jetés sur des grenades en plein vol"],
   down:["Un manifestant se serait blessé tout seul, selon une source policière","Blessé : il aurait percuté une matraque à vive allure"],
   film:["Des images non vérifiées circulent sur les réseaux sociaux","Vidéo virale : nos experts doutent qu'une vidéo puisse prouver quoi que ce soit"],
   banner:["Une banderole hostile déployée face aux forces de l'ordre","La banderole mesurerait trois mètres, un record selon la préfecture"],
   bloque:["Une charge stoppée net par du tissu, la préfecture demande l'interdiction du coton","Banderole : le ministère étudie une interdiction des mots écrits en gros"],
-  medic:["Des individus en blouse blanche, probablement des casseurs","Street medics : la préfecture s'interroge sur ces soignants autoproclamés"],
+  medic:["Des individus en blouse blanche, probablement des casseurs","Street medics : la ministre de la santé s'interroge sur ces soignants autoproclamés"],
   meg:["Un individu muni d'un mégaphone sème la confusion","Un mégaphone non déclaré repéré dans le cortège"],
   sommations:["SOMMATIONS : la place doit être évacuée dans le calme et sans sortie","La préfecture ordonne la dispersion, sortie conseillée par la rue que voici"],
   metro:["Station République fermée pour la sécurité de la station","Trafic perturbé : 25 stations fermées pour votre confort"],
   prefet:["ARRÊTÉ PRÉFECTORAL : la sortie est déplacée pour votre sécurité","La sortie prévue est une zone interdite depuis trente secondes"],
   nasse:["Encerclement en cours : un dispositif d'accompagnement des manifestants","Les manifestants sont invités à se disperser par la sortie qui n'existe pas"],
   exit:["La manifestation se disperse dans le calme (ils sont partis)","Des manifestants auraient réussi à rentrer chez eux, une enquête est ouverte"],
-  idle:["Météo : brouillard de gaz sur République, éclaircies en fin de nasse","Le ministre salue le professionnalisme des forces en direct d'un plateau","Bourse : le cours de la grenade lacrymogène s'envole","Chiffres officiels : moins de manifestants que de policiers, comme d'habitude","Débat en plateau : faut-il interdire les jambes en manifestation ?","Marianne aurait été vue sans autorisation de manifester sur son socle"],
+  idle:["Météo : brouillard de gaz sur République, éclaircies en fin de nasse","Le ministre salue le professionnalisme des forces en direct d'un plateau","Bourse : le cours du gaz lacrymogène s'envole","Chiffres officiels : 16 manifestants et plusieurs centaines de milliers de violents délinquants racisés","Débat en plateau : faut-il interdire les jambes en manifestation ?","Marianne aurait été vue sans autorisation de manifester sur son socle"],
 };
 const tickEl = $('tick'), trackEl = $('track');
 let tickQ = [], tickBusy = false, tickTimer = 0;
