@@ -12,6 +12,8 @@ python3 -m http.server
 
 Zéro dépendance, zéro build.
 
+Le studio de sprites s'ouvre de la même façon : `studio.html`.
+
 ## Structure
 
 | Fichier | Rôle |
@@ -19,6 +21,11 @@ Zéro dépendance, zéro build.
 | `index.html` | La page : HUD, scène, outils, bandeau d'info. |
 | `css/jeu.css` | Le style de l'interface (pancartes en carton, bandeau télé). |
 | `src/jeu.js` | Le proto v0.1 en un seul fichier : génération de carte, foule, police, gaz, timeline, rendu, écrans. |
+| `studio.html`, `src/studio.js`, `css/studio.css` | Le studio : dessin des pièces de persos, réglage des tirages, aperçu de la foule. |
+| `src/sprites.js` | Le moteur de sprites, commun au studio et (bientôt) au jeu. |
+| `data/palette.js` | La palette de 256 couleurs, générée par `tools/palette.py`. |
+| `data/sprites.js` | Les pièces et les tirages, éditables à la main ou depuis le studio. |
+| `docs/direction-artistique.md` | Tailles, palette, rôles, animations : la référence visuelle. |
 | `src/vendor/charabia.js` | Copie du moteur de voix [Charabia](https://github.com/Miniclash/Charabia), pas encore branché. |
 | `docs/etat-du-projet.md` | Ce qui existe, ce qui coince, ce qui vient. |
 

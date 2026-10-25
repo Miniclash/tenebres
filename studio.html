@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bismillah Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jersey+10&family=Pixelify+Sans:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="css/studio.css">
+</head>
+<body class="crt-on">
+<canvas id="bg" width="96" height="54" aria-hidden="true"></canvas>
+<div id="crt" aria-hidden="true"></div>
+
+<div class="wrap">
+  <header>
+    <div>
+      <h1 class="logo" id="logo" aria-label="Bismillah Studio"></h1>
+      <p class="tagline">L'atelier des figurants de « C'est les ténèbres ». Tu dessines des pièces, la foule se compose toute seule.</p>
+    </div>
+    <div class="head-tools">
+      <label class="toggle"><input type="checkbox" id="crtToggle" checked> Écran CRT</label>
+    </div>
+  </header>
+
+  <section class="panel" aria-label="La rue">
+    <div class="panel-head">
+      <h2>La rue</h2>
+      <div class="actions">
+        <button class="btn gold sm" id="sceneTirer">Nouveau tirage</button>
+        <button class="btn ghost sm" id="scenePause">Pause</button>
+      </div>
+    </div>
+    <div class="scene-wrap" id="sceneWrap"><canvas id="scene" width="192" height="84"></canvas></div>
+    <div class="ctls scene-ctls">
+      <div class="ctl"><div class="ctl-top"><label for="nFoule">Manifestants</label><span class="val" id="vFoule"></span></div><input type="range" id="nFoule" min="0" max="220" step="1" value="80"></div>
+      <div class="ctl"><div class="ctl-top"><label for="nMedic">Medics</label><span class="val" id="vMedic"></span></div><input type="range" id="nMedic" min="0" max="12" step="1" value="3"></div>
+      <div class="ctl"><div class="ctl-top"><label for="nCrs">CRS en cordon</label><span class="val" id="vCrs"></span></div><input type="range" id="nCrs" min="0" max="8" step="1" value="6"></div>
+      <div class="ctl"><span class="lab" id="lab-zoom">Zoom</span><div class="seg" role="group" aria-labelledby="lab-zoom" id="segZoom"></div><small>« Jeu » = la taille d'un écran desktop dans le jeu.</small></div>
+    </div>
+  </section>
+
+  <div class="studio">
+    <section class="panel" aria-label="L'atelier">
+      <div class="panel-head">
+        <h2>L'atelier</h2>
+        <div class="seg" role="group" aria-label="Calque" id="segCalque"></div>
+      </div>
+      <div class="pieces" id="pieces"></div>
+      <div class="actions piece-actions">
+        <button class="btn sm" id="pNew">Nouvelle</button>
+        <button class="btn ghost sm" id="pDup">Dupliquer</button>
+        <button class="btn ghost sm" id="pRen">Renommer</button>
+        <button class="btn red sm" id="pDel">Supprimer</button>
+      </div>
+
+      <div class="atelier">
+        <div class="board">
+          <div class="frames">
+            <div class="seg" role="group" aria-label="Image" id="segImage"></div>
+            <span class="frame-note" id="frameNote"></span>
+          </div>
+          <canvas id="grid" width="288" height="352" aria-label="Grille de dessin 9 par 11"></canvas>
+          <div class="tools" role="group" aria-label="Outils" id="tools"></div>
+          <div class="tools">
+            <button class="tool" id="tUndo" title="Annuler (Ctrl+Z)">Annuler</button>
+            <button class="tool" id="tCopy" title="Recopier l'image A sur l'image courante">Copier A</button>
+            <button class="tool" id="tClear">Effacer</button>
+            <span class="arrows" role="group" aria-label="Décaler la pièce">
+              <button class="tool" data-shift="-1,0" aria-label="Décaler à gauche">←</button><button class="tool" data-shift="0,-1" aria-label="Décaler en haut">↑</button><button class="tool" data-shift="0,1" aria-label="Décaler en bas">↓</button><button class="tool" data-shift="1,0" aria-label="Décaler à droite">→</button>
+            </span>
+          </div>
+          <div class="tools toggles">
+            <label class="toggle"><input type="checkbox" id="optMiroir"> Miroir</label>
+            <label class="toggle"><input type="checkbox" id="optMannequin" checked> Mannequin</label>
+            <label class="toggle"><input type="checkbox" id="optPelure" checked> Pelure</label>
+          </div>
+        </div>
+
+        <div class="side">
+          <div class="preview-box">
+            <canvas id="preview" width="27" height="15"></canvas>
+            <div class="preview-tools">
+              <span class="lab" id="lab-mq">Mannequin</span>
+              <div class="seg" role="group" aria-labelledby="lab-mq" id="segMannequin"></div>
+              <button class="btn ghost sm" id="mqTirer">Autre tirage</button>
+            </div>
+          </div>
+          <div class="encre">
+            <div class="lbl">Encre : <b id="encreNom"></b></div>
+            <div class="canaux" id="canaux"></div>
+            <details class="palette-box" open>
+              <summary>Couleurs fixes</summary>
+              <div class="palette" id="palette"></div>
+            </details>
+          </div>
+        </div>
+      </div>
+      <p class="hint">Raccourcis : B crayon, E gomme, I pipette, G remplir, M miroir, Ctrl+Z annuler, flèches pour décaler. Le cadre pointillé = le corps (5 × 7), la croix = le pied.</p>
+    </section>
+
+    <section class="panel" aria-label="Les tirages">
+      <div class="panel-head">
+        <h2>Les tirages</h2>
+      </div>
+      <div class="seg" role="group" aria-label="Type de perso" id="segType"></div>
+      <p class="pane-intro" id="typeNote"></p>
+      <div id="tirCalques" class="tir-list"></div>
+      <h3>Couleurs</h3>
+      <p class="pane-intro">Touche un canal pour le choisir, puis une couleur en dessous pour l'ajouter. Touche une pastille du canal pour la retirer. Une couleur en double tombe plus souvent.</p>
+      <div id="tirCanaux" class="tir-list"></div>
+      <div class="palette" id="tirPalette"></div>
+      <p class="msg" id="tirMsg" role="status"></p>
+    </section>
+  </div>
+
+  <section class="panel" aria-label="Le cortège">
+    <div class="panel-head">
+      <div>
+        <h2>Le cortège</h2>
+        <p class="hint">Des tirages au hasard, en grand. Touche une carte pour en faire ton mannequin.</p>
+      </div>
+      <button class="btn gold sm" id="deckTirer">Tirer</button>
+    </div>
+    <div class="deck" id="deck"></div>
+  </section>
+
+  <section class="panel" aria-label="Fichier">
+    <h2>Fichier</h2>
+    <p class="pane-intro">Le studio garde ton travail dans ce navigateur. Pour le mettre dans le jeu, télécharge <code>sprites.js</code> et remplace <code>data/sprites.js</code> dans le repo.</p>
+    <p class="msg" id="fileState" role="status"></p>
+    <div class="actions">
+      <button class="btn gold" id="fDown">Télécharger sprites.js</button>
+      <button class="btn sm" id="fCopy">Copier</button>
+      <button class="btn red sm" id="fReset">Revenir au fichier du repo</button>
+    </div>
+    <details>
+      <summary>Importer un sprites.js</summary>
+      <textarea class="txt" id="fIn" rows="4" placeholder="Colle ici le contenu d'un sprites.js ou son JSON" spellcheck="false"></textarea>
+      <button class="btn ghost sm" id="fLoad">Charger</button>
+    </details>
+    <p class="msg" id="fileMsg" role="status"></p>
+  </section>
+
+  <footer>Bismillah Studio. Palette de 256 couleurs dans <code>data/palette.js</code>, pièces et tirages dans <code>data/sprites.js</code>, moteur commun au jeu dans <code>src/sprites.js</code>.</footer>
+</div>
+
+<script src="data/palette.js"></script>
+<script src="data/sprites.js"></script>
+<script src="src/sprites.js"></script>
+<script src="src/studio.js"></script>
+</body>
+</html>
