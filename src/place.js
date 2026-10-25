@@ -1235,11 +1235,16 @@ function rendu(){
 const stage = $('stage');
 function taille(){
   const r = stage.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
-  const kx = (r.width - 6) * dpr / PW, ky = (r.height - 6) * dpr / PH;
-  let k = Math.floor(Math.min(kx, ky));
-  if (k < 1) k = Math.min(kx, ky);
-  cv.style.width = (PW * k / dpr) + 'px'; cv.style.height = (PH * k / dpr) + 'px';
+  const w = r.width - 6, h = r.height - 6;
+  if (w <= 0 || h <= 0) return;
+  // On remplit toute la place disponible. On ne garde un agrandissement entier (pixels tous égaux)
+  // que s'il fait perdre moins de 6 % de la taille.
+  let k = Math.min(w / PW, h / PH);
+  const ent = Math.floor(k * dpr) / dpr;
+  if (ent > 0 && ent >= k * .94) k = ent;
+  cv.style.width = Math.floor(PW * k) + 'px'; cv.style.height = Math.floor(PH * k) + 'px';
 }
+if (window.ResizeObserver) new ResizeObserver(taille).observe(stage);
 window.addEventListener('resize', taille);
 const outils = Array.from(document.querySelectorAll('.tool'));
 function choisirOutil(t){ outil = t; outils.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.tool === t))); }
